@@ -59,7 +59,7 @@ function Player:init(args)
     local cast = function(pitch_a)
       local enemy = table.shuffle(main.current.main:get_objects_by_classes(main.current.enemies))[1]
       if enemy then
-        gambler1:play{pitch = pitch_a, volume = math.remap(gold, 0, 50, 0, 0.5)}
+        gambler1:play{pitch = pitch_a, volume = math.clamp(math.remap(gold, 0, 50, 0, 0.5), 0, 0.75)}
         enemy:hit(2*gold)
         if main.current.sorcerer_level > 0 then
           self.sorcerer_count = self.sorcerer_count + 1
@@ -69,7 +69,7 @@ function Player:init(args)
             self.t:after(0.25, function()
               local enemy = table.shuffle(main.current.main:get_objects_by_classes(main.current.enemies))[1]
               if enemy then
-                gambler1:play{pitch = pitch_a + 0.05, volume = math.remap(gold, 0, 50, 0, 0.5)}
+                gambler1:play{pitch = pitch_a + 0.05, volume = math.clamp(math.remap(gold, 0, 50, 0, 0.5), 0, 0.75)}
                 enemy:hit(2*gold)
               end
             end)
@@ -1955,6 +1955,8 @@ Projectile:implement(GameObject)
 Projectile:implement(Physics)
 function Projectile:init(args)
   self:init_game_object(args)
+  if not self.group.world then self.dead = true; return end
+  if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
   self.hfx:add('hit', 1)
   self:set_as_rectangle(10, 4, 'dynamic', 'projectile')
   self.pierce = args.pierce or 0
@@ -3635,7 +3637,9 @@ Gold:implement(GameObject)
 Gold:implement(Physics)
 function Gold:init(args)
   self:init_game_object(args)
+  if not self.group.world then self.dead = true; return end
   if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
+  if #self.group:get_objects_by_class(Gold) > 30 then self.dead = true; return end
   self:set_as_rectangle(3, 3, 'dynamic', 'ghost')
   self:set_restitution(0.5)
   local r = random:float(0, 2*math.pi)
@@ -3740,8 +3744,9 @@ HealingOrb:implement(GameObject)
 HealingOrb:implement(Physics)
 function HealingOrb:init(args)
   self:init_game_object(args)
-  self:init_game_object(args)
+  if not self.group.world then self.dead = true; return end
   if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
+  if #self.group:get_objects_by_class(HealingOrb) > 30 then self.dead = true; return end
   self:set_as_rectangle(4, 4, 'dynamic', 'ghost')
   self:set_restitution(0.5)
   local r = random:float(0, 2*math.pi)
@@ -3852,6 +3857,7 @@ Critter:implement(Unit)
 function Critter:init(args)
   self:init_game_object(args)
   if tostring(self.x) == tostring(0/0) or tostring(self.y) == tostring(0/0) then self.dead = true; return end
+  if #self.group:get_objects_by_class(Critter) > 100 then self.dead = true; return end
   self:init_unit()
   self:set_as_rectangle(7, 4, 'dynamic', 'player')
   self:set_restitution(0.5)
