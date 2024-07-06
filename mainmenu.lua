@@ -99,6 +99,7 @@ function MainMenu:on_enter(from)
         'intimidation', 'vulnerability', 'temporal_chains', 'ceremonial_dagger', 'homing_barrage', 'critical_strike', 'noxious_strike', 'infesting_strike', 'burning_strike', 'lucky_strike', 'healing_strike', 'stunning_strike',
         'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
       }
+      run_time = run.time or 0
       gold = run.gold or 3
       passives = run.passives or {}
       locked_state = run.locked_state
@@ -133,7 +134,7 @@ function MainMenu:on_enter(from)
     b.spring:pull(0.2, 200, 10)
     b.selected = true
     ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
-    system.open_url('https://discord.gg/Yjk2Q5gDqA')
+    system.open_url('https://discord.gg/4d6GWmChKY')
   end}
 end
 

@@ -46,6 +46,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
   self.shop_level = shop_level
   self.shop_xp = shop_xp
   camera.x, camera.y = gw/2, gh/2
+  max_units = math.clamp(7 + current_new_game_plus + self.loop, 7, 12)
 
   input:set_mouse_visible(true)
 
@@ -136,6 +137,7 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
       music_slow_amount = 1
+      run_time = 0
       gold = 3
       passives = {}
       main_song_instance:stop()
@@ -168,18 +170,6 @@ function BuyScreen:on_enter(from, level, loop, units, passives, shop_level, shop
 
   trigger:tween(1, main_song_instance, {volume = 0.2, pitch = 1}, math.linear)
 
-  --[[
-  if self.level == 1 then
-    self.screen_text = Text2{group = self.ui, x = gw/2, y = gh/2, lines = {
-      {text = '[bg3]press K if screen is too large', font = pixul_font, alignment = 'center'},
-      {text = '[bg3]press L if screen is too small', font = pixul_font, alignment = 'center'},
-    }}
-    self.t:after(8, function()
-      self.t:tween(0.2, self.screen_text, {sy = 0}, math.linear, function() self.screen_text.sy = 0 end)
-    end)
-  end
-  ]]--
-
   locked_state = {locked = self.locked, cards = {self.cards[1] and self.cards[1].unit, self.cards[2] and self.cards[2].unit, self.cards[3] and self.cards[3].unit}} 
   system.save_run(self.level, self.loop, gold, self.units, self.passives, self.shop_level, self.shop_xp, run_passive_pool, locked_state)
 end
@@ -188,6 +178,10 @@ end
 function BuyScreen:update(dt)
   if main_song_instance:isStopped() then
     main_song_instance = _G[random:table{'song1', 'song2', 'song3', 'song4', 'song5'}]:play{volume = 0.2}
+  end
+
+  if not self.paused then
+    run_time = run_time + dt
   end
 
   self:update_game_object(dt*slow_amount)
@@ -543,6 +537,7 @@ function RestartButton:update(dt)
     TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
       slow_amount = 1
       music_slow_amount = 1
+      run_time = 0
       gold = 3
       passives = {}
       main_song_instance:stop()
@@ -692,7 +687,7 @@ end
 function GoButton:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed and not self.transitioning then
+  if ((self.selected and input.m1.pressed) or input.enter.pressed) and not self.transitioning then
     if #self.parent.units == 0 then
       if not self.info_text then
         error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
@@ -718,6 +713,8 @@ function GoButton:update(dt)
         main:go_to('arena', self.parent.level, self.parent.loop, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, self.parent.locked)
       end, text = Text({{text = '[wavy, ' .. tostring(state.dark_transitions and 'fg' or 'bg') .. ']level ' .. tostring(self.parent.level) .. '/' .. tostring(25*(self.parent.loop+1)), font = pixul_font, alignment = 'center'}}, global_text_tags)}
     end
+
+    if input.enter.pressed then self.selected = false end
   end
 end
 
@@ -850,6 +847,36 @@ function LevelButton:update(dt)
       system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
     end
   end
+
+  if self.selected and input.m2.pressed then
+    if self.parent.shop_level <= 1 then return end
+    if gold < 10 then
+      self.spring:pull(0.2, 200, 10)
+      self.selected = true
+      error1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      if not self.info_text_2 then
+        self.info_text_2 = InfoText{group = main.current.ui}
+        self.info_text_2:activate({
+          {text = '[fg]not enough gold', font = pixul_font, alignment = 'center'},
+        }, nil, nil, nil, nil, 16, 4, nil, 2)
+        self.info_text_2.x, self.info_text_2.y = gw/2, gh/2 + 30
+      end
+      self.t:after(2, function() self.info_text_2:deactivate(); self.info_text_2.dead = true; self.info_text_2 = nil end, 'info_text_2')
+    else
+      ui_switch2:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      self.shop_xp = 0
+      self.parent.shop_level = self.parent.shop_level - 1
+      self.max_xp = (self.parent.shop_level == 1 and 3) or (self.parent.shop_level == 2 and 4) or (self.parent.shop_level == 3 and 5) or (self.parent.shop_level == 4 and 6) or (self.parent.shop_level == 5 and 0)
+      self.parent.shop_xp = self.shop_xp
+      self:create_info_text()
+      self.selected = true
+      self.spring:pull(0.2, 200, 10)
+      gold = gold - 10
+      self.parent.shop_text:set_text{{text = '[wavy_mid, fg]shop [fg]- [fg, nudge_down]gold: [yellow, nudge_down]' .. gold, font = pixul_font, alignment = 'center'}}
+      self.text = Text({{text = '[bg10]' .. tostring(self.parent.shop_level), font = pixul_font, alignment = 'center'}}, global_text_tags)
+      system.save_run(self.parent.level, self.parent.loop, gold, self.parent.units, self.parent.passives, self.parent.shop_level, self.parent.shop_xp, run_passive_pool, locked_state)
+    end
+  end
 end
 
 
@@ -962,7 +989,7 @@ end
 function RerollButton:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed then
+  if (self.selected and input.m1.pressed) or input.r.pressed then
     if self.parent:is(BuyScreen) then
       if gold < 2 then
         self.spring:pull(0.2, 200, 10)
@@ -1009,6 +1036,8 @@ function RerollButton:update(dt)
         self.text = Text({{text = '[bg10]reroll: [yellow]5', font = pixul_font, alignment = 'center'}}, global_text_tags)
       end
     end
+
+    if input.r.pressed then self.selected = false end
   end
 end
 
@@ -1336,7 +1365,7 @@ function PassiveCard:update(dt)
   self:update_game_object(dt)
   self.passive_name:update(dt)
 
-  if self.selected and input.m1.pressed and self.arena.choosing_passives then
+  if ((self.selected and input.m1.pressed) or input[tostring(self.card_i)].pressed) and self.arena.choosing_passives then
     self.arena.choosing_passives = false
     table.insert(self.arena.passives, {passive = self.passive, level = 1, xp = 0})
     self.arena:restore_passives_to_pool(self.card_i)
@@ -1585,7 +1614,7 @@ end
 function ShopCard:update(dt)
   self:update_game_object(dt)
 
-  if self.selected and input.m1.pressed then
+  if (self.selected and input.m1.pressed) or input[tostring(self.i)].pressed then
     if self.parent:buy(self.unit, self.i) then
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       _G[random:table{'coins1', 'coins2', 'coins3'}]:play{pitch = random:float(0.95, 1.05), volume = 0.5}

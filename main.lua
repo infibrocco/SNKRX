@@ -14,10 +14,6 @@ function init()
 
   input:bind('move_left', {'a', 'left', 'dpleft', 'm1'})
   input:bind('move_right', {'d', 'e', 's', 'right', 'dpright', 'm2'})
-  --[[
-  input:bind('move_up', {'w', 'up', 'dpup'})
-  input:bind('move_down', {'s', 'down', 'dpdown'})
-  ]]--
   input:bind('enter', {'space', 'return', 'fleft', 'fdown', 'fright'})
 
   local s = {tags = {sfx}}
@@ -615,7 +611,7 @@ function init()
     ['chronomancer'] = function(lvl) return '[yellow]+20%[fg] attack speed to all allies' end,
     ['spellblade'] = function(lvl) return '[fg]throws knives that deal [yellow]' .. get_character_stat('spellblade', lvl, 'dmg') .. '[fg] damage, pierce and spiral outwards' end,
     ['psykeeper'] = function(lvl) return '[fg]creates [yellow]3[fg] healing orbs every time the psykeeper takes [yellow]25%[fg] of its max HP in damage' end,
-    ['engineer'] = function(lvl) return '[fg]drops sentries that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
+    ['engineer'] = function(lvl) return '[fg]drops turrets that shoot bursts of projectiles, each dealing [yellow]' .. get_character_stat('engineer', lvl, 'dmg') .. '[fg] damage' end,
     ['plague_doctor'] = function(lvl) return '[fg]creates an area that deals [yellow]' .. get_character_stat('plague_doctor', lvl, 'dmg') .. '[fg] damage per second' end,
     ['barbarian'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('barbarian', lvl, 'dmg') .. '[fg] AoE damage and stuns enemies hit for [yellow]4[fg] seconds' end,
     ['juggernaut'] = function(lvl) return '[fg]deals [yellow]' .. get_character_stat('juggernaut', lvl, 'dmg') .. '[fg] AoE damage and pushes enemies away with a strong force' end,
@@ -657,7 +653,7 @@ function init()
     ['vagrant'] = '[fg]Experience',
     ['swordsman'] = '[yellow]Cleave',
     ['wizard'] = '[blue]Magic Missile',
-    ['magician'] = '[blue]Ethereal Form',
+    ['magician'] = '[blue]Quick Cast',
     ['archer'] = '[green]Bounce Shot',
     ['scout'] = '[red]Dagger Resonance',
     ['cleric'] = '[green]Mass Heal',
@@ -717,7 +713,7 @@ function init()
     ['vagrant'] = '[light_bg]Experience',
     ['swordsman'] = '[light_bg]Cleave',
     ['wizard'] = '[light_bg]Magic Missile',
-    ['magician'] = '[light_bg]Ethereal Form',
+    ['magician'] = '[light_bg]Quick Cast',
     ['archer'] = '[light_bg]Bounce Shot',
     ['scout'] = '[light_bg]Dagger Resonance',
     ['cleric'] = '[light_bg]Mass Heal ',
@@ -774,10 +770,10 @@ function init()
   }
 
   character_effect_descriptions = {
-    ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active set' end,
+    ['vagrant'] = function() return '[yellow]+15%[fg] attack speed and damage per active class' end,
     ['swordsman'] = function() return "[fg]the swordsman's damage is [yellow]doubled" end,
     ['wizard'] = function() return '[fg]the projectile chains [yellow]2[fg] times' end,
-    ['magician'] = function() return '[fg]the magician becomes invulnerable for [yellow]6[fg] seconds but also cannot attack' end,
+    ['magician'] = function() return '[yellow]+50%[[fg] attack speed every [yellow]12[fg] seconds for [yellow]6[fg] seconds' end,
     ['archer'] = function() return '[fg]the arrow ricochets off walls [yellow]3[fg] times' end,
     ['scout'] = function() return '[yellow]+25%[fg] damage per chain and [yellow]+3[fg] chains' end,
     ['cleric'] = function() return '[fg]creates [yellow]4[fg] healing orbs every [yellow]8[fg] seconds' end,
@@ -792,7 +788,7 @@ function init()
     ['cannoneer'] = function() return '[fg]showers the hit area in [yellow]7[fg] additional cannon shots that deal [yellow]' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. '[fg] AoE damage' end,
     ['dual_gunner'] = function() return '[fg]every 5th attack shoot in rapid succession for [yellow]2[fg] seconds' end,
     ['hunter'] = function() return '[fg]summons [yellow]3[fg] pets and the pets ricochet off walls once' end,
-    ['sentry'] = function() return '[yellow]+50%[fg] sentry attack speed and the projectiles ricochet [yellow]twice[fg]' end,
+    ['sentry'] = function() return '[yellow]+50%[fg] sentry turret attack speed and the projectiles ricochet [yellow]twice[fg]' end,
     ['chronomancer'] = function() return '[fg]enemies take damage over time [yellow]50%[fg] faster' end,
     ['spellblade'] = function() return '[fg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[fg]deal [yellow]double[fg] the damage taken by the psykeeper to all enemies' end,
@@ -834,10 +830,10 @@ function init()
   }
 
   character_effect_descriptions_gray = {
-    ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active set' end,
+    ['vagrant'] = function() return '[light_bg]+15% attack speed and damage per active class' end,
     ['swordsman'] = function() return "[light_bg]the swordsman's damage is doubled" end,
     ['wizard'] = function() return '[light_bg]the projectile chains 3 times' end,
-    ['magician'] = function() return '[light_bg]the magician becomes invulnerable for 6 seconds but also cannot attack' end,
+    ['magician'] = function() return '[light_bg]+50% attack speed every 12 seconds for 6 seconds' end,
     ['archer'] = function() return '[light_bg]the arrow ricochets off walls 3 times' end,
     ['scout'] = function() return '[light_bg]+25% damage per chain and +3 chains' end,
     ['cleric'] = function() return '[light_bg]creates 4 healing orbs' end,
@@ -852,7 +848,7 @@ function init()
     ['cannoneer'] = function() return '[light_bg]showers the hit area in 7 additional cannon shots that deal ' .. get_character_stat('cannoneer', 3, 'dmg')/2 .. ' AoE damage' end,
     ['dual_gunner'] = function() return '[light_bg]every 5th attack shoot in rapid succession for 2 seconds' end,
     ['hunter'] = function() return '[light_bg]summons 3 pets and the pets ricochet off walls once' end,
-    ['sentry'] = function() return '[light_bg]+50% attack speed and the projectiles ricochet twice' end,
+    ['sentry'] = function() return '[light_bg]+50% sentry turret attack speed and the projectiles ricochet twice' end,
     ['chronomancer'] = function() return '[light_bg]enemies take damage over time 50% faster' end,
     ['spellblade'] = function() return '[light_bg]faster projectile speed and tighter turns' end,
     ['psykeeper'] = function() return '[light_bg]deal double the damage taken by the psykeeper to all enemies' end,
@@ -1010,7 +1006,7 @@ function init()
         ylb1(lvl) .. ']4[light_bg]/[' .. ylb2(lvl) .. ']3[light_bg]/[' .. ylb3(lvl) .. ']2[fg] attacks'
     end,
     ['mercenary'] = function(lvl) return '[' .. ylb1(lvl) .. ']2[light_bg]/[' .. ylb2(lvl) .. ']4 [fg]- [' .. ylb1(lvl) .. ']+8%[light_bg]/[' .. ylb2(lvl) .. ']+16% [fg]chance for enemies to drop gold on death' end,
-    ['explorer'] = function(lvl) return '[yellow]+15%[fg] attack speed and damage per active set to allied explorers' end,
+    ['explorer'] = function(lvl) return '[yellow]+15%[fg] attack speed and damage per active class to allied explorers' end,
   }
 
   tier_to_characters = {
@@ -1731,15 +1727,10 @@ function init()
     'silencing_strike', 'culling_strike', 'lightning_strike', 'psycholeak', 'divine_blessing', 'hardening', 'kinetic_strike',
   }
   main:add(Arena'arena')
-  main:go_to('arena', 16, 0, {
-    {character = 'archer', level = 3},
-    {character = 'barrager', level = 3},
-    {character = 'corruptor', level = 3},
-    {character = 'host', level = 3},
-    {character = 'beastmaster', level = 3},
-    {character = 'infestor', level = 3},
+  main:go_to('arena', 21, 0, {
+    {character = 'magician', level = 3},
   }, {
-    {passive = 'hive', level = 3},
+    {passive = 'awakening', level = 3},
   })
   ]]--
 
@@ -1875,6 +1866,7 @@ function open_options(self)
         if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
         if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
         if self.dark_transition_button then self.dark_transition_button.dead = true; self.dark_transition_button = nil end
+        if self.run_timer_button then self.run_timer_button.dead = true; self.run_timer_button = nil end
         if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
         if self.music_button then self.music_button.dead = true; self.music_button = nil end
         if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end
@@ -1904,6 +1896,7 @@ function open_options(self)
         TransitionEffect{group = main.transitions, x = gw/2, y = gh/2, color = state.dark_transitions and bg[-2] or fg[0], transition_action = function()
           slow_amount = 1
           music_slow_amount = 1
+          run_time = 0
           gold = 3
           passives = {}
           main_song_instance:stop()
@@ -1925,18 +1918,25 @@ function open_options(self)
       end}
     end
 
-    self.mouse_button = Button{group = self.ui, x = gw/2 - 57, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+    self.mouse_button = Button{group = self.ui, x = gw/2 - 113, y = gh - 150, force_update = true, button_text = 'mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
     action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.mouse_control = not state.mouse_control
       b:set_text('mouse control: ' .. tostring(state.mouse_control and 'yes' or 'no'))
     end}
 
-    self.dark_transition_button = Button{group = self.ui, x = gw/2 + 64, y = gh - 150, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
+    self.dark_transition_button = Button{group = self.ui, x = gw/2 + 13, y = gh - 150, force_update = true, button_text = 'dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'),
     fg_color = 'bg10', bg_color = 'bg', action = function(b)
       ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
       state.dark_transitions = not state.dark_transitions
       b:set_text('dark transitions: ' .. tostring(state.dark_transitions and 'yes' or 'no'))
+    end}
+
+    self.run_timer_button = Button{group = self.ui, x = gw/2 + 121, y = gh - 150, force_update = true, button_text = 'run timer: ' .. tostring(state.run_timer and 'yes' or 'no'), fg_color = 'bg10', bg_color = 'bg',
+    action = function(b)
+      ui_switch1:play{pitch = random:float(0.95, 1.05), volume = 0.5}
+      state.run_timer = not state.run_timer
+      b:set_text('run timer: ' .. tostring(state.run_timer and 'yes' or 'no'))
     end}
 
     self.sfx_button = Button{group = self.ui, x = gw/2 - 46, y = gh - 175, force_update = true, button_text = 'sfx volume: ' .. tostring((state.sfx_volume or 0.5)*10), fg_color = 'bg10', bg_color = 'bg',
@@ -2113,6 +2113,7 @@ function close_options(self)
     if self.restart_button then self.restart_button.dead = true; self.restart_button = nil end
     if self.mouse_button then self.mouse_button.dead = true; self.mouse_button = nil end
     if self.dark_transition_button then self.dark_transition_button.dead = true; self.dark_transition_button = nil end
+    if self.run_timer_button then self.run_timer_button.dead = true; self.run_timer_button = nil end
     if self.sfx_button then self.sfx_button.dead = true; self.sfx_button = nil end
     if self.music_button then self.music_button.dead = true; self.music_button = nil end
     if self.video_button_1 then self.video_button_1.dead = true; self.video_button_1 = nil end

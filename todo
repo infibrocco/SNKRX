@@ -1,5 +1,37 @@
 Weekly maintenance updates:
 
+#3
+
+  * Fixed a bug that would cause incorrect party size after loading a looped run (thanks ArnaudOechslin https://github.com/a327ex/SNKRX/pull/15)
+  * Fixed a rare crash due to enemy critters being spawned during a level transition
+  * Improved descriptions for engineer and sentry to avoid confusion
+  * Fixed engineer's and artificer's cooldown not being displayed properly
+  * Changed freezing field's color to blue for better visual clarity
+  * Increased cryomancer's area of effect by 50%
+  * Increased bane's void rift's size by 50%
+  * Beastmaster now has 10% crit chance by default
+  * The fairy will no longer buff non-attacking units
+  * Awakening and enchanted items will no longer buff non-attacking units
+  * Changed magician's Lv.3 effect to "+50% attack speed every 12 seconds for 6 seconds"
+  Added the following keyboard shortcuts:
+    While in the shop:
+      * R rerolls units
+      * 1, 2, 3 buys units
+      * Enter/space starts the round
+    While in the item selection screen:
+      * R rerolls items
+      * 1, 2, 3, 4 buys items
+
+#2
+
+  * Fixed a bug where NG+5 difficulty would go down to NG+4 after looping
+  * Capped enemy movement speed after level 150
+  * Warden's bubble is now affected by magnify
+  * Changed all text instances of "active set" to "active class" to avoid confusion
+  * Added a run timer option - note that the timer will be off for saved runs that started before the patch
+  -- * Alt tabbing now automatically pauses the game while in the arena
+  * Shop level can now be reduced
+
 #1
   
   * Fixed several blue screen crashes due to broken looping state
@@ -19,6 +51,8 @@ Weekly maintenance updates:
   * Limited gold coins on the arena to 30 due to performance issues
 
 ---
+
+30Hz
 
 Invoker - casts attacks and spells from other units
   having a unit like this from the start will help ensure that attacks are behind function calls that can be accessed by another unit easily rather than mostly hidden like they are now
@@ -69,6 +103,8 @@ Unit ideas - https://i.imgur.com/VNMS2YV.png
 Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3069747783693969554/
 Unit ideas - https://steamcommunity.com/app/915310/discussions/0/3046104336668792953/
 Achievement ideas - https://i.imgur.com/Q7jHWB2.png, https://i.imgur.com/2l5eist.png
+general ideas - https://i.imgur.com/W8EYUU1.png
+room types - https://i.imgur.com/u2AY1ea.png
 
 Draft system
 Ban system
@@ -112,6 +148,8 @@ Roguelite update:
     i.e. 3 attack speed means the same internal attack rate value (like say 6 seconds) for the entire game
     In general it's better if units don't have hidden internal multipliers on these stats, although sometimes that may be inevitable
     Damage:
+      Hit:
+        Everything hits except DoT
       Damage type:
         Attack - physical attacks, decreased by the enemy's armor
         Spell - magical attacks, decreased by the enemy's magic resistance
